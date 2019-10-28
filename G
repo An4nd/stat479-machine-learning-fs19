@@ -1,0 +1,215 @@
+#include<bits/stdc++.h>
+#define ll long long
+#define gc getchar_unlocked
+#define pc putchar_unlocked
+#define repl(i, a, b) for(i=a; i<b; i++)
+#define repe(i, a, b) for(i=a; i<=b; i++)
+#define per(i, a, b) for(i=a; i>=b; i--)
+#define vi vector<int>
+#define vl vector<long>
+#define vll vector<long long>
+#define pb(x) push_back(x)
+#define lt(i) (i<<1)
+#define rt(i) ((i<<1)+1)
+#define mp(a, b) make_pair(a, b)
+#define ln length()
+#define sz size()
+#define md(a, b) ((a+b)>>1)
+#define pii pair<int, int>
+#define pll pair<long, long>
+#define pLL pair<long long, long long>
+#define all(v) v.begin(),v.end()
+#define pn pc('\n');
+using namespace std;
+void sll(ll &x)
+{
+    register char c = gc();
+    x = 0;
+    int neg = 0;
+    for(;((c<48 || c>57) && c != '-');c = gc());
+    if(c=='-') {neg=1;c=gc();}
+    for(;c>47 && c<58;c = gc()) {x = (x<<1) + (x<<3) + c - 48;}
+    if(neg) x=-x;
+}
+void wll(ll a)
+{
+        if(a<0)
+        {
+                pc('-');
+                a=-a;
+        }
+        char snum[100];
+        int i=0;
+        do
+        {
+                snum[i++]=a%10+48;
+                a=a/10;
+        }
+        while(a!=0);
+        --i;
+        while(i>=0)
+        putchar_unlocked(snum[i--]);
+        putchar_unlocked('\n');
+}
+void wi(int a)
+{
+	if(a<0)
+        {
+                pc('-');
+                a=-a;
+        }
+        char snum[100];
+        int i=0;
+        do
+        {
+                snum[i++]=a%10+48;
+                a=a/10;
+        }
+        while(a!=0);
+        --i;
+        while(i>=0)
+        putchar_unlocked(snum[i--]);
+        putchar_unlocked('\n');
+}
+void wl(long a)
+{
+	if(a<0)
+        {
+                pc('-');
+                a=-a;
+        }
+        char snum[100];
+        int i=0;
+        do
+        {
+                snum[i++]=a%10+48;
+                a=a/10;
+        }
+        while(a!=0);
+        --i;
+        while(i>=0)
+        putchar_unlocked(snum[i--]);
+        putchar_unlocked('\n');
+}
+void sl(long &x)
+{
+    register char c = gc();
+    x = 0;
+    int neg = 0;
+    for(;((c<48 || c>57) && c != '-');c = gc());
+    if(c=='-') {neg=1;c=gc();}
+    for(;c>47 && c<58;c = gc()) {x = (x<<1) + (x<<3) + c - 48;}
+    if(neg) x=-x;
+}
+void si(int &x)
+{
+    register char c = gc();
+    x = 0;
+    int neg = 0;
+    for(;((c<48 || c>57) && c != '-');c = gc());
+    if(c=='-') {neg=1;c=gc();}
+    for(;c>47 && c<58;c = gc()) {x = (x<<1) + (x<<3) + c - 48;}
+    if(neg) x=-x;
+}
+ll power(ll a, ll b, ll mod)
+{
+        ll ret = 1 ;
+        while(b)
+        {
+                if(b & 1 ) ret = ret*a % mod;
+                a = a*a % mod;
+                b >>= 1 ;
+        }
+        return ret;
+}
+ll gcd(ll a, ll b)
+{
+    while(b) b ^= a ^= b ^= a %= b;
+    return a;
+}
+#define N 100100
+ll n, a[N], q, k, qry[N][5], bit[N*10];
+struct node{
+	ll type, i, val; 
+};
+ll cnt;
+vector<node> v;
+bool compare(node a, node b){
+	return a.val < b.val;
+}
+void update(ll x, ll val){
+	for(;x<=cnt; x+=(x&(-x)))
+		bit[x]+=val;
+}
+ll query(ll x, ll y){
+	ll p=0, q=0;
+	x--;
+	for(;x;x-=(x&(-x)))
+		p+=bit[x];
+	for(;y;y-=(y&(-y)))
+		q+=bit[y];
+	return q-p;	
+}
+int main(){
+	node temp;
+	ll t, i, j, l;
+	ll n;	
+	sll(n);	sll(q); sll(k);
+	repe(i,1,n){
+		sll(a[i]);
+		temp.val=a[i]; temp.i=i; temp.type=0;
+		v.pb(temp);
+	}
+	repe(i,1,q){
+		sll(qry[i][0]);
+		if(!qry[i][0]){
+			ll x,y;
+			sll(x);sll(y);
+			temp.val=y;temp.type=i; temp.i=2;
+			qry[i][1]=x;qry[i][2]=y;
+			v.pb(temp);
+		}
+		else{
+			repe(j,1,4){
+				sll(qry[i][j]);	
+				temp.val=qry[i][j];temp.type=i;temp.i=j;
+				v.pb(temp);
+			}
+		}
+	}
+	sort(v.begin(), v.end(), compare);
+	cnt=0;
+	repl(i,0,v.sz){
+		if(!i || (v[i].val != v[i-1].val))cnt++;
+		if(!v[i].type)
+			a[v[i].i]=cnt;				
+		else
+			qry[v[i].type][v[i].i]=cnt;
+	}	
+	repe(i,1,n)
+		update(a[i], 1);	
+	repe(i,1,q){	
+		if(!qry[i][0]){	
+			update(a[qry[i][1]], -1);
+			a[qry[i][1]]=qry[i][2];
+			update(a[qry[i][1]], 1);
+		}
+		else{
+			ll m, w, x, y, z;
+			w=qry[i][1];x=qry[i][2];
+			y=qry[i][3];z=qry[i][4];
+			if(x < y || z < w)
+				m=0;
+			else if(w <= y && z <= x)
+				m=query(y, z);
+			else if(y <= w && x <= z)
+				m=query(w,x);
+			else if(w <= y && x <= z)
+				m=query(y, x);
+			else if(y <= w && z <= x)
+				m=query(w, z);	
+			if(m >= k)printf("Propose\n");
+			else printf("Do not propose\n");
+		}
+	}
+	return 0;
